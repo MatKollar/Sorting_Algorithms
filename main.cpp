@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include "functions.h"
 using namespace std;
 
 struct timeComplexity{
@@ -9,8 +10,6 @@ struct timeComplexity{
     string averageCase;
     string worstCase;
 };
-
-typedef struct timeComplexity timeComplexity;
 
 struct sortingAlgorithm{
     string name;
@@ -21,238 +20,44 @@ struct sortingAlgorithm{
     void (*algorithm)(int array[], int length){};
 };
 
-int mainMenu();
-
-/*------------------------------------- Algorithms implementation ----------------------------------------------*/
-
-void printSortedArray(int array[], int length){
-
-    cout << "\tSorted array: ";
-    for(int i = 0; i < length; i++)
-        cout << array[i] << " ";
-
-    string back;
-    cin >> back;
+int main(){
     mainMenu();
+    return 0;
 }
 
-void swap(int *a, int *b){
-    int tmp = *a;
-    *a = *b;
-    *b = tmp;
-}
-
-
-void bubbleSort(int array[], int length){
-
-    for (int i = 0; i < length - 1; i++)
-        for (int j = 0; j < length-i-1; j++)
-            if (array[j] > array[j+1])
-                swap(&array[j], &array[j+1]);
-
-    printSortedArray(array, length);
-}
-
-void selectionSort(int array[], int length){
-
-    for(int i = 0; i < length; i++){
-        int min = i;
-        for(int j = i + 1; j < length; j++){
-            if(array[j] < array[min])
-                min = j;
-        }
-        if( min != i )
-            swap(&array[min], &array[i]);
-    }
-
-    printSortedArray(array, length);
-}
-
-void insertionSort(int array[], int length){
-
-    for(int i = 1; i < length; i++){
-        int key = array[i];
-        int j = i - 1;
-        while(j >= 0 && array[j] > key){
-            array[j + 1] = array[j];
-            j--;
-        }
-        array[j + 1] = key;
-    }
-
-    printSortedArray(array, length);
-}
-
-void merge(int *array, int low, int middle, int high) {
-    int i, j, key;
-
-    int n1 = middle - low + 1;
-    int n2 = high - middle;
-    int leftArray[n1], rightArray[n2];
-
-    for (i = 0; i < n1; i++)
-        leftArray[i] = array[low+i];
-
-    for (j = 0; j < n2; j++)
-        rightArray[j] = array[middle+1+j];
-
-    i = 0; j = 0; key = low;
-    while (i < n1 && j < n2){
-
-        if(leftArray[i] <= rightArray[j]) {
-            array[key] = leftArray[i];
-            i++;
-        }
-        else{
-            array[key] = rightArray[j];
-            j++;
-        }
-        key++;
-    }
-    while (i<n1) {
-        array[key] = leftArray[i];
-        i++;
-        key++;
-    }
-    while (j<n2) {
-        array[key] = rightArray[j];
-        j++;
-        key++;
-    }
-}
-
-void mergeSortRecursive(int *array, int low, int high) {
-    if(low < high) {
-        int middle = (high + low)/2;
-        mergeSortRecursive(array, low, middle);
-        mergeSortRecursive(array, middle + 1, high);
-        merge(array, low, middle, high);
-    }
-}
-
-void mergeSort(int array[], int length){
-    mergeSortRecursive(array, 0, length - 1);
-    printSortedArray(array, length);
-}
-
-int partition(int *array, int low, int high){
-    int pivot = array[high];
-    int i = (low - 1);
-
-    for (int j = low; j <= high - 1; j++){
-        if (array[j] < pivot){
-            i++;
-            swap(&array[i], &array[j]);
-        }
-    }
-    swap(&array[i + 1], &array[high]);
-    return (i + 1);
-}
-
-void quickSortRecursive(int *array,int low,int high){
-    if(low < high){
-        int pivot = partition(array, low, high);
-        quickSortRecursive(array, low, pivot - 1);
-        quickSortRecursive(array, pivot + 1, high);
-    }
-}
-
-void quickSort(int *array, int length){
-    quickSortRecursive(array, 0, length - 1);
-    printSortedArray(array, length);
-}
-
-void heapify(int *array, int length, int i){
-    int largest = i;
-    int l = 2 * i + 1;
-    int r = 2 * i + 2;
-
-    if (l < length && array[l] > array[largest])
-        largest = l;
-    else
-        largest = i;
-
-    if (r < length && array[r] > array[largest])
-        largest = r;
-
-    if (largest != i){
-        swap(array[i], array[largest]);
-        heapify(array, length, largest);
-    }
-}
-
-void buildMaxHeap(int *array, int length){
-    for (int i = length / 2 - 1 ; i >= 0; i--)
-        heapify(array, length, i);
-}
-
-void heapSort(int *array, int length){
-
-    buildMaxHeap(array, length);
-
-    for (int i = length - 1; i > 0; i--) {
-        swap(array[0], array[i]);
-        heapify(array, i, 0);
-    }
-    printSortedArray(array, length);
-}
-/*-------------------------------------------------------------------------------------------------------*/
-vector<int> filterNumbers(int &length) {
-
-    string userInput;
-    stringstream ss;
-    vector<int> numbers;
-    int number;
-
-    while (true){
-        cin >> userInput;
-
-        if (userInput == "m") {
-            mainMenu();
-        }
-
-        ss << userInput;
-
-        if (stringstream(userInput) >> number){
-            numbers.push_back(number);
-            length++;
-        }
-
-        if (cin.peek() == '\n') {
-            break;
-        }
-    }
-
-    return numbers;
-}
-
-void userInput(sortingAlgorithm &algorithm){
-    int length = 0;
-    vector<int> numbers = filterNumbers(length);
-    int *unsortedArray = &numbers[0];
-    algorithm.algorithm(unsortedArray, length);
-}
-
-void algorithmDescription(sortingAlgorithm &algorithm){
+int mainMenu(){
     system("cls");
-    cout << "\n\t\t\t\t" << algorithm.name << endl;
-    cout << "\n\tTime Complexity: " << endl;
-    cout << "\n\t\tBest Case: " << algorithm.timeComplexity.bestCase << endl;
-    cout << "\t\tAverage Case: " << algorithm.timeComplexity.averageCase << endl;
-    cout << "\t\tWorst Case: " << algorithm.timeComplexity.worstCase << endl;
-    cout << "\n\tSpace Complexity: " << algorithm.spaceComplexity << endl;
-    cout << "\n\tStability: " << algorithm.stability << endl;
-    cout << "\n\tPseudoCode: \n\n" << algorithm.pseudoCode << endl;
-    cout << "\n\n\tEnter numbers separated by a space, which will be sorted using the " << algorithm.name << " algorithm" << endl;
-    cout << "\t\t\t(If you want to return to main menu enter m)\n\n\t";
+    cout << "\n\t\t\t\tSorting Algorithms" << endl;
+    cout << "\tYou can select the sorting algorithm by entering the appropriate number." << endl;
+    cout << "\t\t\t\t(To quit enter q)" << endl;
+    printAlgorithms();
 
-    userInput(algorithm);
+    char selection = userSelection();
+    algorithmInit(selection);
+
+    return 0;
+}
+
+void printAlgorithms(){
+    cout << "\n\t[0] Bubble Sort" << endl;
+    cout << "\n\t[1] Selection Sort" << endl;
+    cout << "\n\t[2] Insertion Sort" << endl;
+    cout << "\n\t[3] Merge Sort" << endl;
+    cout << "\n\t[4] Quick Sort" << endl;
+    cout << "\n\t[5] Heap Sort" << endl;
+    cout << "\n\t";
+}
+
+char userSelection(){
+    char selection;
+    cin >> selection;
+    return selection;
 }
 
 void algorithmInit(char selection){
     sortingAlgorithm algorithm;
 
-    switch(selection){
+    switch (selection){
         case '0':
             algorithm.name = "Bubble Sort";
             algorithm.timeComplexity.bestCase = "O(n)";
@@ -412,36 +217,50 @@ void algorithmInit(char selection){
     algorithmDescription(algorithm);
 }
 
-char userSelection(){
-    char selection;
-    cin >> selection;
-    return selection;
-}
-
-void printAlgorithms(){
-    cout << "\n\t[0] Bubble Sort" << endl;
-    cout << "\n\t[1] Selection Sort" << endl;
-    cout << "\n\t[2] Insertion Sort" << endl;
-    cout << "\n\t[3] Merge Sort" << endl;
-    cout << "\n\t[4] Quick Sort" << endl;
-    cout << "\n\t[5] Heap Sort" << endl;
-    cout << "\n\t";
-}
-
-int mainMenu(){
+void algorithmDescription(sortingAlgorithm &algorithm){
     system("cls");
-    cout << "\n\t\t\t\tSorting Algorithms" << endl;
-    cout << "\tYou can select the sorting algorithm by entering the appropriate number." << endl;
-    cout << "\t\t\t\t(To quit enter q)" << endl;
-    printAlgorithms();
+    cout << "\n\t\t\t\t" << algorithm.name << endl;
+    cout << "\n\tTime Complexity: " << endl;
+    cout << "\n\t\tBest Case: " << algorithm.timeComplexity.bestCase << endl;
+    cout << "\t\tAverage Case: " << algorithm.timeComplexity.averageCase << endl;
+    cout << "\t\tWorst Case: " << algorithm.timeComplexity.worstCase << endl;
+    cout << "\n\tSpace Complexity: " << algorithm.spaceComplexity << endl;
+    cout << "\n\tStability: " << algorithm.stability << endl;
+    cout << "\n\tPseudoCode: \n\n" << algorithm.pseudoCode << endl;
+    cout << "\n\n\tEnter numbers separated by a space, which will be sorted using the " << algorithm.name << " algorithm" << endl;
+    cout << "\t\t\t(If you want to return to main menu enter m)\n\n\t";
 
-    char selection = userSelection();
-    algorithmInit(selection);
-
-    return 0;
+    userInput(algorithm);
 }
 
-int main() {
-    mainMenu();
-    return 0;
+void userInput(sortingAlgorithm &algorithm){
+    int length = 0;
+    vector<int> numbers = filterNumbers(length);
+    int *unsortedArray = &numbers[0];
+    algorithm.algorithm(unsortedArray, length);
+}
+
+vector<int> filterNumbers(int &length){
+    string userInput;
+    stringstream ss;
+    vector<int> numbers;
+    int number;
+
+    while (true){
+        cin >> userInput;
+
+        if (userInput == "m")
+            mainMenu();
+
+        ss << userInput;
+
+        if (stringstream(userInput) >> number){
+            numbers.push_back(number);
+            length++;
+        }
+
+        if (cin.peek() == '\n')
+            break;
+    }
+    return numbers;
 }
