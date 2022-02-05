@@ -9,3 +9,4 @@ Console application with a collection of sorting algorithms and their basic desc
 - Merge Sort
 - Quick Sort
 - Heap Sort
+- Counting Sort
