@@ -26,5 +26,6 @@ void quickSort(int *array, int length);
 void heapify(int *array, int length, int i);
 void buildMaxHeap(int *array, int length);
 void heapSort(int *array, int length);
+void countSort(int *array, int length);
 
 #endif //SORTING_ALGORITHMS_ALGORITHMS_H

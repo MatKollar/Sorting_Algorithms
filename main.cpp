@@ -45,6 +45,7 @@ void printAlgorithms(){
     cout << "\n\t[3] Merge Sort" << endl;
     cout << "\n\t[4] Quick Sort" << endl;
     cout << "\n\t[5] Heap Sort" << endl;
+    cout << "\n\t[6] Counting Sort" << endl;
     cout << "\n\t";
 }
 
@@ -205,6 +206,30 @@ void algorithmInit(char selection){
                                    "        HEAPIFY(A, 0)\n\t";
 
             algorithm.algorithm = heapSort;
+            break;
+
+        case '6':
+            algorithm.name = "Counting Sort";
+            algorithm.timeComplexity.bestCase = "O(n+k)";
+            algorithm.timeComplexity.averageCase = "O(n+k)";
+            algorithm.timeComplexity.worstCase = "O(n+k)";
+            algorithm.spaceComplexity = "O(max)";
+            algorithm.stability = "stable";
+            algorithm.pseudoCode = "\tCOUNTING-SORT(A, B, k)\n\t"
+                                   "    let C[0..k] be a new array\n\t"
+                                   "    for i = 0 to k\n\t"
+                                   "        C[i] = 0\n\t"
+                                   "    for j = 0 to A.length\n\t"
+                                   "        C[A[j]] = C[A[j]] + 1\n\t"
+                                   "    //C[i] now contains the number of elements equal to i.\n\t"
+                                   "    for i = 1 to k\n\t"
+                                   "        C[i] = C[i] + C[i - 1]\n\t"
+                                   "    //C[i] now contains the number of elements less than or equal to i.\n\t"
+                                   "    for j = 0 to A.length\n\t"
+                                   "        B[C[A[j]]-1] = A[j]\n\t"
+                                   "        C[A[j]] = C[A[j]] - 1\n\t";
+
+            algorithm.algorithm = countSort;
             break;
 
         case 'q':

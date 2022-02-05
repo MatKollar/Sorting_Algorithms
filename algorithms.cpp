@@ -174,3 +174,33 @@ void heapSort(int *array, int length){
     }
     printSortedArray(array, length);
 }
+
+void countSort(int *array, int length){
+    int output[length];
+    int k = array[0];
+    for(int i = 0; i < length; i++){
+        k = max(k, array[i]);
+    }
+    int count[k];
+    for (int i = 0; i <= k; i++){
+        count[i] = 0;
+    }
+
+    for (int i = 0; i < length; i++){
+        count[array[i]]++;
+    }
+
+    for (int i = 1; i <= k; i++){
+        count[i]+=count[i-1];
+    }
+
+    for (int i = 0; i < length; i++){
+        output[count[array[i]] - 1] = array[i];
+        count[array[i]]--;
+    }
+
+    for (int i=0; i < length; i++){
+        array[i] = output[i];
+    }
+    printSortedArray(array, length);
+}
